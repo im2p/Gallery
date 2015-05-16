@@ -1,15 +1,28 @@
 /*jslint browser: true*/
 /*global $, jQuery, alert*/
 
+
+/*
+TO-DO:
+Restructure script to read all folders to create dynamic nav.
+For each image folder, add name of folder to array and append nav item. Assign identifying class/id to each nav item and change
+conents of image gallery to corresponding category.
+
+Adjust appends to adjust to select nav item. Function will have to be created to reload page/reappend links depending on nav selection.
+
+Re-implement Jquery mobile now that conflicting resizing function has been replaced.
+
+Make imgpath array incorporate folder name array. When clicking folder link call a function that sets imgval to 0 and sets variable to desired position
+in folder array.
+*/
 $(document).ready(function () {
 //array pos 0
     "use strict";
-    var $imgval, $arraysize, $precounter, $imgpath, $imgname, $currentimageheight, $currentimagewidth,
+    var $imgval, $arraysize, $imgpath, $imgname, $currentimageheight, $currentimagewidth,
 		$containeroffsettop, $containeroffsetleft, $hiddenheight, $unhiddenheight, $currentstate, $navheight,
-		$mouseypercent, $mousexpercent, $dimensionsarray;
+		$mouseypercent, $mousexpercent, $dimensionsarray, $folderarray, $foldernames;
 	
     $imgval = 0;
-    $precounter = 0;
 	
 	function echo(x) { $('#testecho').html(x); }
 	function echo2(x) { $('#testecho2').html(x); }
@@ -31,7 +44,6 @@ $(document).ready(function () {
 	
 	function echotests() {
 		$(document).bind('mousemove', function (e) {
-			echo('Test');
 			echo2('Width: ' + $currentimagewidth);
 			echo3('Height: ' + $currentimageheight);
 			echo4('X: ' + $mousexpercent);
@@ -101,15 +113,18 @@ $(document).ready(function () {
         url: 'ajax.php',
         dataType: 'json',
         cache: false,
-        success: function ($filepath) {
+        success: function ($galleryajax) {
                    
-            $imgpath = $filepath.imgpath;
-            $imgname = $filepath.imgtitle;
-			$dimensionsarray = $filepath.dimensions;
+            $imgpath = $galleryajax.imgpath;
+            $imgname = $galleryajax.imgtitle;
+			$dimensionsarray = $galleryajax.dimensions;
+			$folderarray = $galleryajax.folderpath;
+			$foldernames = $galleryajax.foldername;
+			
             $arraysize = $imgpath.length;
 
 //changeimage || APPEND LEFT AND RIGHT NEED UPDATING
-		
+////////////////////////////////////////////////////////////////////////////////////////////////////		
 			function changeappendleft() {  //EXPERIMENTAL
 				$('.deleteme').removeClass('bg100');
 				$('.deleteme').css('background-size', 'contain');
@@ -126,6 +141,7 @@ $(document).ready(function () {
 				updatecontainersizes();
 				resizeports();
 			}
+////////////////////////////////////////////////////////////////////////////////////////////////////
 			function changeappendright() {  //EXPERIMENTAL
 				$('.deleteme').removeClass('bg100');
 				$('.deleteme').css('background-size', 'contain');
@@ -142,7 +158,7 @@ $(document).ready(function () {
 				updatecontainersizes();
 				resizeports();
 			}
-			
+////////////////////////////////////////////////////////////////////////////////////////////////////			
 			function changeappendfade() {
 				if ($('.imagecontainer').hasClass('bg100')) {
 					$('.imagecontainer').append('<div class="portimage incommingfade bg100"><img src="' + $imgpath[$imgval] + '" class="galimg galimghidden"></div>');
@@ -154,7 +170,6 @@ $(document).ready(function () {
 					}
 				} else {
 					$('.imagecontainer').append('<div class="portimage incommingfade galimghidden"><img src="' + $imgpath[$imgval] + '" class="galimg"></div>');
-					
 				}
 				if ($('.incommingfade').hasClass('height100')) {
 					$('.incommingfade').css('background-position', '50% ' + $mouseypercent + '%');
@@ -173,13 +188,11 @@ $(document).ready(function () {
 					$(this).addClass('deleteme');
 					$(this).removeClass('currentfade');
 				});
-				
 				$('.imgname').html($imgname[$imgval]);
 				updatecontainersizes();
 				resizeports();
-				
 			}
-			
+////////////////////////////////////////////////////////////////////////////////////////////////////			
 			function changeimage($type) {
 				//Disable buttons and set labels
 				$('#currently').html('Current image: ' + ($imgval + 1));    //change counter
@@ -195,17 +208,26 @@ $(document).ready(function () {
                 $('.navbtn').removeClass('bold');
                 $('#' + $imgval).addClass('bold');
             }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////
             
 //preload images, create links
-            while ($precounter < $arraysize) {
+			
+			$.each($imgpath, function ($precounter) {
                 $('<img />').attr('src', $imgpath[$precounter]);
                 $('#links').append('<a class="navbtn" id="' + $precounter + '">' + ($precounter + 1) + '</a>');
-				
-				$('.status').append('<img class="preload" id="' + $precounter + '" src="' + $filepath.thumbarray[$precounter] + '" >');
-                $precounter += 1;
-            }
+				$('.status').append('<img class="preload" id="' + $precounter + '" src="' + $galleryajax.thumbarray[$precounter] + '" >');
+             
+            });
+			
+			
+			$.each($foldernames, function (i) {
+				$('.leftbar').append('<div id="' + $foldernames[i] + '" class="navlink">' + $foldernames[i] + '</div>');
+			});
+			
+			echo($foldernames);
             changeimage('appendfade');
+			
+			
 //Number Selection Actions 
             $('.navbtn').click(function () {
                 if ($imgval !== parseInt($(this).attr("id"), 10)) {
