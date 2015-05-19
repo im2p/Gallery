@@ -207,3 +207,55 @@
 	display: none;
 	background:none !important;
 }
+
+.navlink, .navlink.a {
+	width:200px;
+    color:#000000;
+	padding:5px 0 5px 15px;
+	text-align:left;
+	font-size:13px;
+    text-decoration: none;
+	background-image:url(../img/bg.jpg);
+	cursor: pointer;
+	-o-transition: .2s linear, background-image 0s linear;
+	-ms-transition: .2s linear, background-image 0s linear;
+	-moz-transition: .2s linear, background-image 0s linear;
+	-webkit-transition: .2s linear, background-image 0s linear;
+	transition:color margin .2s linear, background-image 0s linear;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+	}
+	
+	
+.navlink:hover{
+		background-image:url(../img/bglight.jpg);
+		width:200px;
+		font-family:semi;
+        border-right:6px solid #344257;
+		font-style:underline;
+        box-sizing:border-box;
+        -moz-box-sizing:border-box;
+        -webkit-box-sizing:border-box;
+}	
+
+.navlink:active{
+		background-image:url(../img/bglighter.jpg);
+		background-color:#eeeeee;
+        border-right:6px solid #344257;
+		width:200px;
+		color:#344257;
+		font-style:underline;
+}	
+
+.navlink.bold {
+		background-image:url(../img/bglight.jpg);
+		width:200px;
+		font-family:semi;
+		font-weight: normal;
+        border-right:6px solid #344257;
+		font-style:underline;
+        box-sizing:border-box;
+        -moz-box-sizing:border-box;
+        -webkit-box-sizing:border-box;
+}
